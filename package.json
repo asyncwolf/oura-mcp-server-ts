@@ -1,12 +1,13 @@
 {
   "name": "oura-mcp-server",
   "version": "1.0.0",
-  "description": "Local MCP server exposing Oura Ring data to Claude Desktop",
+  "description": "MCP server exposing Oura Ring data to Claude - runs locally over stdio or hosted over HTTP",
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
+    "start:http": "node dist/httpServer.js",
     "authorize": "node dist/authorize.js"
   },
   "dependencies": {

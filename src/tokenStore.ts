@@ -12,8 +12,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// tokens.json lives next to the project root (one level up from dist/ or src/)
-const TOKENS_PATH = path.join(__dirname, "..", "tokens.json");
+// Defaults to the project root (one level up from dist/ or src/). Override
+// with TOKENS_PATH to point at a persistent volume in a hosted deployment
+// (e.g. TOKENS_PATH=/data/tokens.json).
+const TOKENS_PATH = process.env.TOKENS_PATH ?? path.join(__dirname, "..", "tokens.json");
 
 export interface StoredTokens {
   access_token: string;
@@ -45,7 +47,8 @@ export function saveTokens(tokenResponse: OuraTokenResponse): void {
 export function loadTokens(): StoredTokens {
   if (!fs.existsSync(TOKENS_PATH)) {
     throw new Error(
-      "tokens.json not found. Run `npm run authorize` once to authorize this app with Oura."
+      "No tokens found. Run `npm run authorize` (local mode) or visit /oauth/authorize " +
+        "on your hosted instance to authorize this app with Oura."
     );
   }
   return JSON.parse(fs.readFileSync(TOKENS_PATH, "utf-8"));

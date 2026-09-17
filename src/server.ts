@@ -91,19 +91,25 @@ function asToolResult(data: unknown) {
 
 const server = new McpServer({ name: "oura", version: "1.0.0" });
 
-server.tool(
+server.registerTool(
   "get_personal_info",
-  "Get the Oura account holder's basic profile info (age, weight, height, biological sex).",
-  {},
+  {
+    title: "Get personal info",
+    description: "Get the Oura account holder's basic profile info (age, weight, height, biological sex).",
+    inputSchema: {},
+  },
   async () => asToolResult(await ouraGet("personal_info", {}))
 );
 
-server.tool(
+server.registerTool(
   "get_daily_sleep",
-  "Get daily sleep scores and contributors (e.g. efficiency, restfulness, timing).",
   {
-    start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 7 days ago."),
-    end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    title: "Get daily sleep",
+    description: "Get daily sleep scores and contributors (e.g. efficiency, restfulness, timing).",
+    inputSchema: {
+      start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 7 days ago."),
+      end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    },
   },
   async ({ start_date, end_date }) => {
     const range = defaultDateRange();
@@ -116,12 +122,16 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   "get_sleep_periods",
-  "Get detailed sleep period data (bedtime, wake time, sleep stages, HRV, heart rate during sleep).",
   {
-    start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 7 days ago."),
-    end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    title: "Get sleep periods",
+    description:
+      "Get detailed sleep period data (bedtime, wake time, sleep stages, HRV, heart rate during sleep).",
+    inputSchema: {
+      start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 7 days ago."),
+      end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    },
   },
   async ({ start_date, end_date }) => {
     const range = defaultDateRange();
@@ -134,12 +144,16 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   "get_daily_readiness",
-  "Get daily readiness scores and contributors (recovery index, HRV balance, temperature deviation).",
   {
-    start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 7 days ago."),
-    end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    title: "Get daily readiness",
+    description:
+      "Get daily readiness scores and contributors (recovery index, HRV balance, temperature deviation).",
+    inputSchema: {
+      start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 7 days ago."),
+      end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    },
   },
   async ({ start_date, end_date }) => {
     const range = defaultDateRange();
@@ -152,12 +166,15 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   "get_daily_activity",
-  "Get daily activity scores, steps, calories, and movement contributors.",
   {
-    start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 7 days ago."),
-    end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    title: "Get daily activity",
+    description: "Get daily activity scores, steps, calories, and movement contributors.",
+    inputSchema: {
+      start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 7 days ago."),
+      end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    },
   },
   async ({ start_date, end_date }) => {
     const range = defaultDateRange();
@@ -170,31 +187,35 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   "get_heart_rate",
-  "Get raw heart rate time-series data.",
   {
-    start_datetime: z
-      .string()
-      .optional()
-      .describe("ISO 8601 datetime (e.g. 2026-09-10T00:00:00-00:00). Defaults to 24 hours ago."),
-    end_datetime: z.string().optional().describe("ISO 8601 datetime. Defaults to now."),
+    title: "Get heart rate",
+    description: "Get raw heart rate time-series data.",
+    inputSchema: {
+      start_datetime: z
+        .string()
+        .optional()
+        .describe("ISO 8601 datetime (e.g. 2026-09-10T00:00:00-00:00). Defaults to 24 hours ago."),
+      end_datetime: z.string().optional().describe("ISO 8601 datetime. Defaults to now."),
+    },
   },
   async ({ start_datetime, end_datetime }) => {
     const end = end_datetime ?? new Date().toISOString();
     const start = start_datetime ?? new Date(Date.now() - 86_400_000).toISOString();
-    return asToolResult(
-      await ouraGet("heartrate", { start_datetime: start, end_datetime: end })
-    );
+    return asToolResult(await ouraGet("heartrate", { start_datetime: start, end_datetime: end }));
   }
 );
 
-server.tool(
+server.registerTool(
   "get_workouts",
-  "Get logged workouts (activity type, duration, intensity, calories).",
   {
-    start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 30 days ago."),
-    end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    title: "Get workouts",
+    description: "Get logged workouts (activity type, duration, intensity, calories).",
+    inputSchema: {
+      start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 30 days ago."),
+      end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    },
   },
   async ({ start_date, end_date }) => {
     const range = defaultDateRange(30);
@@ -207,12 +228,15 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   "get_tags",
-  "Get enhanced tags the user logged (e.g. stress, illness, alcohol, meditation).",
   {
-    start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 30 days ago."),
-    end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    title: "Get tags",
+    description: "Get enhanced tags the user logged (e.g. stress, illness, alcohol, meditation).",
+    inputSchema: {
+      start_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to 30 days ago."),
+      end_date: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
+    },
   },
   async ({ start_date, end_date }) => {
     const range = defaultDateRange(30);

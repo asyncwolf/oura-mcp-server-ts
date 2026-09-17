@@ -1,0 +1,22 @@
+{
+  "name": "oura-mcp-server",
+  "version": "1.0.0",
+  "description": "Local MCP server exposing Oura Ring data to Claude Desktop",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "authorize": "node dist/authorize.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.5.0",
+    "dotenv": "^16.4.5",
+    "open": "^10.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
+  }
+}
